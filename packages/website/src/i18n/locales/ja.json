@@ -1,0 +1,98 @@
+{
+  "common": {
+    "footer": {
+      "copy": "FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. All Rights Reserved.",
+      "rights": "All rights reserved."
+    },
+    "logo": "CAC"
+  },
+  "doc": {
+    "sections": {
+      "compression": {
+        "desc": "CAC は製作工程を可能な限り短い文字列に圧縮できます。",
+        "title": "圧縮"
+      },
+      "concepts": "コアコンセプト",
+      "installation": "インストール",
+      "multiLang": {
+        "desc": "解析後、7 か国語のスキル名など豊富な情報を提供します。",
+        "title": "マルチ言語"
+      },
+      "usage": "使い方",
+      "usageDesc": "TypeScript/JavaScript プロジェクトでツールをインポートして使用します："
+    },
+    "tagline": "CAC 解析ツールをフロントエンドプロジェクトに統合する方法を素早く学びましょう。",
+    "title": "開発者ドキュメント"
+  },
+  "flow": {
+    "actionsCount": "{{count}}ステップ{{time}}秒",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "copySuccess": "クリップボードにコピーしました！",
+    "macroSettings": "マクロ設定",
+    "macroTitle": "マクロ #{{index}}",
+    "newImport": "新規インポート",
+    "newImportConfirm": "現在のマクロデータは破棄されます。新規インポートを開始しますか？",
+    "settings": {
+      "auto": "UIと同じ (自動)",
+      "ending": "終了",
+      "gameLang": "マクロ言語",
+      "macrolock": "/macrolock を有効化",
+      "transition": "遷移"
+    },
+    "share": "共有",
+    "shareCode": "工程コード",
+    "shareLink": "リンク",
+    "tabs": {
+      "macro": "FFXIV マクロ",
+      "markdown": "Markdown"
+    },
+    "title": "製作工程"
+  },
+  "home": {
+    "badge": "FFXIV 製作工程の標準化",
+    "preview": {
+      "actions": "圧縮された製作工程",
+      "output": "標準 CAC コード"
+    },
+    "tagline": "オープンソース、クロスランゲージ、クロスプラットフォーム",
+    "title": "CAC パーサー",
+    "tryNow": "今すぐ試す"
+  },
+  "import": {
+    "error_cac": "CAC コードの解析に失敗しました。入力を確認してください。",
+    "error_macro": "マクロの解析に失敗しました。入力形式を確認してください。",
+    "features": {
+      "compressed": {
+        "desc": "CACは効率的な圧縮を使用して、製作工程の共有をより簡潔にします。",
+        "title": "高度な圧縮"
+      },
+      "global": {
+        "desc": "すべての言語およびリージョンで動作します。",
+        "title": "グローバル"
+      },
+      "macroReady": {
+        "desc": "ワンクリックでゲーム内マクロにエクスポートできます。",
+        "title": "マクロ対応"
+      }
+    },
+    "mode": {
+      "cac": "CACコード",
+      "macro": "ゲームマクロ"
+    },
+    "placeholder_cac": "CACコードをここに貼り付け...",
+    "placeholder_macro": "ゲームマクロをここに貼り付け...",
+    "submit": "解析",
+    "title": "インポート"
+  },
+  "nav": {
+    "doc": "ドキュメント",
+    "github": "GitHub",
+    "home": "ホーム",
+    "import": "インポート",
+    "theme": {
+      "dark": "ダークモード",
+      "light": "ライトモード"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "xiv-cac",
+  "version": "0.0.0",
+  "author": "InfSein",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run build:utils && npm run dev:website",
+    "dev:utils": "npm --workspace packages/utils run dev",
+    "dev:website": "npm --workspace packages/website run dev",
+    "build": "npm run build:utils && npm run build:website",
+    "build:utils": "npm --workspace packages/utils run build",
+    "build:website": "npm --workspace packages/website run build",
+    "test:utils": "npm --workspace packages/utils run test",
+    "publish:utils": "npm --workspace packages/utils publish",
+    "clean": "rimraf packages/**/dist"
+  },
+  "devDependencies": {
+    "rimraf": "^6.1.2",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

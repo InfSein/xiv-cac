@@ -1,0 +1,98 @@
+{
+  "common": {
+    "footer": {
+      "copy": "FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. Tous droits réservés.",
+      "rights": "Tous droits réservés."
+    },
+    "logo": "CAC"
+  },
+  "doc": {
+    "sections": {
+      "compression": {
+        "desc": "CAC peut compresser le processus d'artisanat en la chaîne la plus courte possible.",
+        "title": "Compression"
+      },
+      "concepts": "Concepts Clés",
+      "installation": "Installation",
+      "multiLang": {
+        "desc": "Après analyse, fournit des informations riches, y compris les noms des compétences en 7 langues.",
+        "title": "Multi-langue"
+      },
+      "usage": "Utilisation",
+      "usageDesc": "Importez et utilisez les outils dans votre projet TypeScript/JavaScript :"
+    },
+    "tagline": "Apprenez rapidement à intégrer l'outil d'analyse CAC dans vos projets frontend.",
+    "title": "Docs Développeur"
+  },
+  "flow": {
+    "actionsCount": "{{count}} actions {{time}} s",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "copySuccess": "Copié dans le presse-papiers!",
+    "macroSettings": "Paramètres macro",
+    "macroTitle": "Macro #{{index}}",
+    "newImport": "Nouvel import",
+    "newImportConfirm": "Cela effacera les macros actuelles. Voulez-vous continuer ?",
+    "settings": {
+      "auto": "Identique à l'UI (Auto)",
+      "ending": "Fin",
+      "gameLang": "Langue de la macro",
+      "macrolock": "Activer /macrolock",
+      "transition": "Transition"
+    },
+    "share": "Partager",
+    "shareCode": "Code du processus",
+    "shareLink": "Lien",
+    "tabs": {
+      "macro": "Macro FFXIV",
+      "markdown": "Markdown"
+    },
+    "title": "Processus d'artisanat"
+  },
+  "home": {
+    "badge": "Standardisation du processus d'artisanat FFXIV",
+    "preview": {
+      "actions": "Processus compressé",
+      "output": "Code CAC standard"
+    },
+    "tagline": "Open Source, Multi-langue, Multi-plateforme",
+    "title": "Parseur CAC",
+    "tryNow": "Essayer maintenant"
+  },
+  "import": {
+    "error_cac": "Échec de l'analyse du code CAC. Veuillez vérifier votre saisie.",
+    "error_macro": "Échec de l'analyse de la macro. Veuillez vérifier le format.",
+    "features": {
+      "compressed": {
+        "desc": "CAC utilise une compression efficace pour rendre le partage des processus d'artisanat plus concis.",
+        "title": "Compressé"
+      },
+      "global": {
+        "desc": "Fonctionne dans toutes les langues et régions du jeu.",
+        "title": "Global"
+      },
+      "macroReady": {
+        "desc": "Exportez vers des macros en jeu en un clic.",
+        "title": "Prêt pour Macro"
+      }
+    },
+    "mode": {
+      "cac": "Code CAC",
+      "macro": "Macro de jeu"
+    },
+    "placeholder_cac": "Collez le code CAC ici...",
+    "placeholder_macro": "Collez la macro de jeu ici...",
+    "submit": "Analyser",
+    "title": "Importer"
+  },
+  "nav": {
+    "doc": "Documentation",
+    "github": "GitHub",
+    "home": "Accueil",
+    "import": "Importer",
+    "theme": {
+      "dark": "Mode sombre",
+      "light": "Mode clair"
+    }
+  }
+}

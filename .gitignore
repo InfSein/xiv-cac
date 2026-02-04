@@ -1,0 +1,5 @@
+.agent
+node_modules
+packages/*/dist
+packages/*/node_modules
+private-folder-alias.json

@@ -1,0 +1,98 @@
+{
+  "common": {
+    "footer": {
+      "copy": "FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. All Rights Reserved.",
+      "rights": "All rights reserved."
+    },
+    "logo": "CAC"
+  },
+  "doc": {
+    "sections": {
+      "compression": {
+        "desc": "CAC can compress the crafting process into the shortest possible string.",
+        "title": "Compression"
+      },
+      "concepts": "Core Concepts",
+      "installation": "Installation",
+      "multiLang": {
+        "desc": "After parsing, provides rich info including skill names in 7 languages.",
+        "title": "Multi-Lang"
+      },
+      "usage": "Usage",
+      "usageDesc": "Import and use the tools in your TypeScript/JavaScript project:"
+    },
+    "tagline": "Quickly learn how to integrate the CAC parser tool into your frontend projects.",
+    "title": "Developer Docs"
+  },
+  "flow": {
+    "actionsCount": "{{count}} actions, {{time}}s",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "copySuccess": "Copied to clipboard!",
+    "macroSettings": "Macro Settings",
+    "macroTitle": "Macro #{{index}}",
+    "newImport": "New Import",
+    "newImportConfirm": "This will discard your current macros. Are you sure you want to start a new import?",
+    "settings": {
+      "auto": "Same as UI (Auto)",
+      "ending": "Ending",
+      "gameLang": "Macro Language",
+      "macrolock": "Enable /macrolock",
+      "transition": "Transition"
+    },
+    "share": "Share",
+    "shareCode": "Process Code",
+    "shareLink": "Link",
+    "tabs": {
+      "macro": "FFXIV Macro",
+      "markdown": "Markdown"
+    },
+    "title": "Crafting Process"
+  },
+  "home": {
+    "badge": "FFXIV Crafting Process Standardization",
+    "preview": {
+      "actions": "Compressed Process",
+      "output": "Standard CAC Code"
+    },
+    "tagline": "Open Source, Cross-language, Cross-platform",
+    "title": "CAC Parser",
+    "tryNow": "Try Now"
+  },
+  "import": {
+    "error_cac": "Failed to parse CAC code. Please check your input.",
+    "error_macro": "Failed to parse macro. Please check the format.",
+    "features": {
+      "compressed": {
+        "desc": "CAC uses efficient compression to make sharing crafting processes more concise.",
+        "title": "Compressed"
+      },
+      "global": {
+        "desc": "Works across all game languages and regions.",
+        "title": "Global"
+      },
+      "macroReady": {
+        "desc": "Easily export to in-game macros with one click.",
+        "title": "Macro Ready"
+      }
+    },
+    "mode": {
+      "cac": "CAC Code",
+      "macro": "Game Macro"
+    },
+    "placeholder_cac": "Paste CAC code here...",
+    "placeholder_macro": "Paste game macro here...",
+    "submit": "Parse",
+    "title": "Import"
+  },
+  "nav": {
+    "doc": "Documentation",
+    "github": "GitHub",
+    "home": "Home",
+    "import": "Import",
+    "theme": {
+      "dark": "Dark Mode",
+      "light": "Light Mode"
+    }
+  }
+}

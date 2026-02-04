@@ -1,0 +1,98 @@
+{
+  "common": {
+    "footer": {
+      "copy": "FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. 保留所有权利。",
+      "rights": "保留所有权利。"
+    },
+    "logo": "CAC 工序码"
+  },
+  "doc": {
+    "sections": {
+      "compression": {
+        "desc": "CAC 能够尽可能地将制作工序压缩成最短字符串。",
+        "title": "压缩算法"
+      },
+      "concepts": "核心概念",
+      "installation": "安装",
+      "multiLang": {
+        "desc": "CAC 工序码解析后会提供丰富的信息，这包括每个技能 7 种语言的技能名。",
+        "title": "多语言支持"
+      },
+      "usage": "用法",
+      "usageDesc": "在你的 TypeScript/JavaScript 项目中引入并使用："
+    },
+    "tagline": "快速了解如何将 CAC 解析工具集成到你的前端项目中。",
+    "title": "开发者文档"
+  },
+  "flow": {
+    "actionsCount": "{{count}}步{{time}}秒",
+    "cancel": "取消",
+    "confirm": "确认",
+    "copySuccess": "已复制到剪贴板！",
+    "macroSettings": "宏设置",
+    "macroTitle": "宏 #{{index}}",
+    "newImport": "重新导入",
+    "newImportConfirm": "这将清空当前的宏数据。确定要重新导入吗？",
+    "settings": {
+      "auto": "跟随界面 (自动)",
+      "ending": "结束提示",
+      "gameLang": "宏语言",
+      "macrolock": "启用 /macrolock",
+      "transition": "过渡提示"
+    },
+    "share": "分享",
+    "shareCode": "工序码",
+    "shareLink": "链接",
+    "tabs": {
+      "macro": "游戏宏",
+      "markdown": "Markdown"
+    },
+    "title": "制作工序"
+  },
+  "home": {
+    "badge": "FFXIV 制作工序标准化",
+    "preview": {
+      "actions": "压缩生产工序",
+      "output": "生成标准 CAC 工序码"
+    },
+    "tagline": "开源、跨语言、跨平台",
+    "title": "CAC 工序码解析",
+    "tryNow": "立即体验"
+  },
+  "import": {
+    "error_cac": "解析 CAC 工序码失败，请检查输入是否正确。",
+    "error_macro": "解析宏失败，请检查输入格式是否正确。",
+    "features": {
+      "compressed": {
+        "desc": "CAC 使用高效压缩算法，让制作工序的分享变得更加精简。",
+        "title": "高度压缩"
+      },
+      "global": {
+        "desc": "跨语言、跨大区支持，适配各语言客户端。",
+        "title": "全球通用"
+      },
+      "macroReady": {
+        "desc": "一键将方案转换为游戏内宏，方便快捷。",
+        "title": "生产宏转换"
+      }
+    },
+    "mode": {
+      "cac": "CAC 工序码",
+      "macro": "游戏宏"
+    },
+    "placeholder_cac": "在此粘贴 CAC 工序码...",
+    "placeholder_macro": "在此粘贴游戏宏...",
+    "submit": "解析",
+    "title": "导入"
+  },
+  "nav": {
+    "doc": "开发者文档",
+    "github": "GitHub",
+    "home": "首页",
+    "import": "导入",
+    "theme": {
+      "dark": "深色模式",
+      "light": "浅色模式"
+    }
+  }
+}

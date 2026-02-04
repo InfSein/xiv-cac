@@ -1,0 +1,18 @@
+{
+  "css.lint.unknownAtRules": "ignore",
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    ".gitignore": ".editorconfig, .gitattributes, .gitmodules",
+    "vite.config.*": "next-env.d.ts, tsconfig.json, tsconfig.*.json, eslint*, tailwind*, postcss*",
+    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*",
+    "folder-alias.json": "private-folder-alias.json",
+    "README.md": "LICENSE, *.md",
+    "App.tsx": "index.html, main.tsx",
+    "index.css": "*.css"
+  },
+  "i18n-ally.localesPaths": [
+    "packages/website/src/i18n/locales"
+  ],
+  "i18n-ally.sourceLanguage": "zh-CN",
+  "i18n-ally.keystyle": "nested"
+}

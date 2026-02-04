@@ -1,0 +1,23 @@
+{
+    "packages/utils": {
+        "description": "NPM包"
+    },
+    "packages/website": {
+        "description": "工具站"
+    },
+    "packages/utils/src/conf": {
+        "description": "包配置"
+    },
+    "packages/utils/src/data": {
+        "description": "核心数据"
+    },
+    "packages/utils/src/test": {
+        "description": "单元测试"
+    },
+    "packages/utils/src/tools": {
+        "description": "工具函数"
+    },
+    "packages/utils/src/types": {
+        "description": "类型声明"
+    }
+}

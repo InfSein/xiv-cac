@@ -1,0 +1,98 @@
+{
+  "common": {
+    "footer": {
+      "copy": "FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. All Rights Reserved.",
+      "rights": "All rights reserved."
+    },
+    "logo": "CAC"
+  },
+  "doc": {
+    "sections": {
+      "compression": {
+        "desc": "CAC는 제작 공정을 가능한 한 가장 짧은 문자열로 압축할 수 있습니다.",
+        "title": "압축"
+      },
+      "concepts": "핵심 개념",
+      "installation": "설치",
+      "multiLang": {
+        "desc": "구문 분석 후 7개 언어의 스킬 이름을 포함한 풍부한 정보를 제공합니다.",
+        "title": "다언어"
+      },
+      "usage": "사용법",
+      "usageDesc": "TypeScript/JavaScript 프로젝트에서 툴을 임포트하여 사용하세요:"
+    },
+    "tagline": "CAC 파서 도구를 프론트엔드 프로젝트에 통합하는 방법을 빠르게 알아보세요.",
+    "title": "개발자 문서"
+  },
+  "flow": {
+    "actionsCount": "{{count}}단계 {{time}}초",
+    "cancel": "취소",
+    "confirm": "확인",
+    "copySuccess": "클립보드에 복사되었습니다!",
+    "macroSettings": "매크로 설정",
+    "macroTitle": "매크로 #{{index}}",
+    "newImport": "새로 가져오기",
+    "newImportConfirm": "현재 매크로 데이터가 삭제됩니다. 새로 가져오시겠습니까?",
+    "settings": {
+      "auto": "UI와 동일 (자동)",
+      "ending": "종료",
+      "gameLang": "매크로 언어",
+      "macrolock": "/macrolock 활성화",
+      "transition": "전환"
+    },
+    "share": "공유",
+    "shareCode": "공정 코드",
+    "shareLink": "링크",
+    "tabs": {
+      "macro": "FFXIV 매크로",
+      "markdown": "마크다운"
+    },
+    "title": "제작 공정"
+  },
+  "home": {
+    "badge": "FFXIV 제작 공정 표준화",
+    "preview": {
+      "actions": "압축된 공정",
+      "output": "표준 CAC 코드"
+    },
+    "tagline": "오픈 소스, 크로스 언어, 크로스 플랫폼",
+    "title": "CAC 파서",
+    "tryNow": "지금 시작하기"
+  },
+  "import": {
+    "error_cac": "CAC 코드 구문 분석에 실패했습니다. 입력을 확인해 주세요.",
+    "error_macro": "매크로 구문 분석 실패. 형식을 확인해주세요.",
+    "features": {
+      "compressed": {
+        "desc": "CAC는 효율적인 압축을 사용하여 제작 공정 공유를 더욱 간결하게 만듭니다.",
+        "title": "압축됨"
+      },
+      "global": {
+        "desc": "모든 게임 언어 및 지역에서 작동합니다.",
+        "title": "글로벌"
+      },
+      "macroReady": {
+        "desc": "클릭 한 번으로 게임 내 매크로로 쉽게 내보낼 수 있습니다.",
+        "title": "매크로 준비"
+      }
+    },
+    "mode": {
+      "cac": "CAC 코드",
+      "macro": "게임 매크로"
+    },
+    "placeholder_cac": "여기에 CAC 코드 붙여넣기...",
+    "placeholder_macro": "여기에 게임 매크로 붙여넣기...",
+    "submit": "분석",
+    "title": "가져오기"
+  },
+  "nav": {
+    "doc": "문서",
+    "github": "GitHub",
+    "home": "홈",
+    "import": "가져오기",
+    "theme": {
+      "dark": "다크 모드",
+      "light": "라이트 모드"
+    }
+  }
+}

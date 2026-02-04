@@ -1,0 +1,98 @@
+{
+  "common": {
+    "footer": {
+      "copy": "FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. Alle Rechte vorbehalten.",
+      "rights": "Alle Rechte vorbehalten."
+    },
+    "logo": "CAC"
+  },
+  "doc": {
+    "sections": {
+      "compression": {
+        "desc": "CAC kann den Handwerksprozess in die kürzestmögliche Zeichenfolge komprimieren.",
+        "title": "Komprimierung"
+      },
+      "concepts": "Kernkonzepte",
+      "installation": "Installation",
+      "multiLang": {
+        "desc": "Bietet nach der Analyse umfangreiche Informationen, einschließlich Skill-Namen in 7 Sprachen.",
+        "title": "Mehrsprachig"
+      },
+      "usage": "Verwendung",
+      "usageDesc": "Importieren und verwenden Sie die Tools in Ihrem Projekt:"
+    },
+    "tagline": "Erfahren Sie schnell, wie Sie das CAC-Parser-Tool in Ihre Frontend-Projekte integrieren.",
+    "title": "Entwickler-Dokumentation"
+  },
+  "flow": {
+    "actionsCount": "{{count}} Aktionen {{time}} Sek.",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "copySuccess": "In Zwischenablage kopiert!",
+    "macroSettings": "Makro-Einstellungen",
+    "macroTitle": "Makro #{{index}}",
+    "newImport": "Neuer Import",
+    "newImportConfirm": "Dadurch werden die aktuellen Makros gelöscht. Fortfahren?",
+    "settings": {
+      "auto": "Wie UI (Auto)",
+      "ending": "Ende",
+      "gameLang": "Makrosprache",
+      "macrolock": "/macrolock aktivieren",
+      "transition": "Übergang"
+    },
+    "share": "Teilen",
+    "shareCode": "Prozesscode",
+    "shareLink": "Link",
+    "tabs": {
+      "macro": "FFXIV Makro",
+      "markdown": "Markdown"
+    },
+    "title": "Handwerksprozess"
+  },
+  "home": {
+    "badge": "FFXIV Handwerksprozess-Standardisierung",
+    "preview": {
+      "actions": "Komprimierter Prozess",
+      "output": "Standard CAC-Code"
+    },
+    "tagline": "Open Source, sprachübergreifend, plattformübergreifend",
+    "title": "CAC-Parser",
+    "tryNow": "Jetzt ausprobieren"
+  },
+  "import": {
+    "error_cac": "CAC-Code konnte nicht analysiert werden. Bitte überprüfen Sie Ihre Eingabe.",
+    "error_macro": "Makro konnte nicht analysiert werden. Bitte Format überprüfen.",
+    "features": {
+      "compressed": {
+        "desc": "CAC verwendet effiziente Komprimierung, um das Teilen von Handwerksprozessen prägnanter zu gestalten.",
+        "title": "Komprimiert"
+      },
+      "global": {
+        "desc": "Funktioniert in allen Spielsprachen und Regionen.",
+        "title": "Global"
+      },
+      "macroReady": {
+        "desc": "Mit einem Klick in In-Game-Makros exportieren.",
+        "title": "Makro-Bereit"
+      }
+    },
+    "mode": {
+      "cac": "CAC-Code",
+      "macro": "Spiel-Makro"
+    },
+    "placeholder_cac": "CAC-Code hier einfügen...",
+    "placeholder_macro": "Spiel-Makro hier einfügen...",
+    "submit": "Analysieren",
+    "title": "Importieren"
+  },
+  "nav": {
+    "doc": "Dokumentation",
+    "github": "GitHub",
+    "home": "Startseite",
+    "import": "Importieren",
+    "theme": {
+      "dark": "Dunkler Modus",
+      "light": "Heller Modus"
+    }
+  }
+}
