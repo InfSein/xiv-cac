@@ -1,10 +1,11 @@
 /**
  * 需要在本文件中手动维护生产技能。
- * ————————————————————————————————————————————————————————————————————————————————
+ * ————————————————————————————————————————————————————————————————————————————————————
  * ! 维护注意事项
- *   - CraftAction 的 ids 前8个元素遵循固定顺序：CRP->BSM->ARM->GSM->LTW->WVR->ALC->CUL
- *   - 各 CraftAction 之间的 ids / signatures 不能有重复
- * ————————————————————————————————————————————————————————————————————————————————
+ *   - 常规 CraftAction 的 ids 前8个元素遵循固定顺序：CRP->BSM->ARM->GSM->LTW->WVR->ALC->CUL
+ *   - 特殊 CraftAction (各生产职业共用同一个ID) 则不遵循该规则
+ *   - 各 CraftAction 的 ids / signatures 之间不能有重复
+ * ————————————————————————————————————————————————————————————————————————————————————
  */
 
 import { CraftAction, CraftActionCacId, SupportedLanguages } from "../types/craftactions"
@@ -691,29 +692,23 @@ export const craftActions: Record<CraftActionCacId, CraftAction> = {
     wait_time: 3,
     icon: 1926,
   },
-}
-
-export const craftActionMapById = Object.entries(craftActions)
-  .flatMap(([aid, action]) => action.ids.map(id => [id, Number(aid)] as const))
-  .reduce<Record<number, number>>((map, [id, aid]) => {
-    map[id] = aid
-    return map
-  }, {})
-
-export const craftActionMapByName = Object.entries(craftActions).reduce<Record<string, number>>(
-  (map, [aid, action]) => {
-    const value = Number(aid)
-    SupportedLanguages.forEach(lang => {
-      map[action[`name_${lang}`]] = value
-    })
-    return map
+  [CraftActionCacId.DutyAction2]: {
+    name_zh: "任务指令2",
+    name_tc: "任務指令2",
+    name_ko: "임무용 기술 2",
+    name_ja: "コンテンツアクション2",
+    name_en: "Duty Action II",
+    name_de: "Spezialkommando 2",
+    name_fr: "Action de mission 2",
+    sheet: "Action",
+    ids: [
+      41269, 46843,
+    ],
+    signatures: [
+      "material_miracle",
+      "stellar_steady_hand",
+    ],
+    wait_time: 3,
+    icon: 124,
   },
-  {}
-)
-
-export const craftActionMapBySignature = Object.entries(craftActions)
-  .flatMap(([aid, action]) => action.signatures.map(signature => [signature, Number(aid)] as const))
-  .reduce<Record<string, number>>((map, [signature, aid]) => {
-    map[signature] = aid
-    return map
-  }, {})
+}

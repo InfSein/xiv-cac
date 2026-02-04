@@ -1,4 +1,4 @@
-import { craftActionMapById, craftActionMapByName, craftActionMapBySignature, craftActions } from "../data/craftactions"
+import { craftActionMapById, craftActionMapByName, craftActionMapBySignature, craftActions } from "../data"
 import { encode, decode } from "./code"
 import { CompressOption, DecompressedCraftAction, CraftActionCacId } from "../types"
 
