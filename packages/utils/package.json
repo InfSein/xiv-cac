@@ -2,6 +2,11 @@
   "name": "xiv-cac-utils",
   "version": "0.0.2",
   "author": "InfSein",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/InfSein/xiv-cac.git",
+    "directory": "packages/utils"
+  },
   "description": "Provide utils for xiv-cac standard.",
   "type": "module",
   "main": "./dist/index.cjs",
