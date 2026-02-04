@@ -135,6 +135,9 @@ const Flow = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
+  const siteOrigin = window.location.origin;
+  const siteUrl = siteOrigin.includes('github.io') ? `${siteOrigin}/xiv-cac/` : siteOrigin;
+
   // Macro Settings
   type MacroSettings = {
     language: string;
@@ -250,7 +253,7 @@ const Flow = () => {
 
   const generateMarkdown = () => {
     let md = `### My Craft Flow\r\n\r\n`;
-    md += `* CAC: ${rawCode}\r\n* SHARE: <${window.location.origin}/?s=${rawCode}>\r\n\r\n`;
+    md += `* CAC: ${rawCode}\r\n* SHARE: <${siteUrl}/?s=${rawCode}>\r\n\r\n`;
     macros.forEach((macro, idx) => {
       md += `#### ${t('flow.macroTitle', { index: idx + 1 })}\r\n`;
       md += '```\r\n' + macro + '\r\n```';
@@ -421,11 +424,11 @@ const Flow = () => {
                   <div className="relative">
                     <input
                       readOnly
-                      value={`${window.location.origin}/?s=${rawCode}`}
+                      value={`${siteUrl}/?s=${rawCode}`}
                       className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-4 pr-12 py-2.5 text-xs text-neutral-400 focus:outline-none focus:border-accent/50 transition-colors font-mono"
                     />
                     <button
-                      onClick={() => copyToClipboard(`${window.location.origin}/?s=${rawCode}`, 'share')}
+                      onClick={() => copyToClipboard(`${siteUrl}/?s=${rawCode}`, 'share')}
                       className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors ${copiedId === 'share'
                         ? 'text-green-500 bg-green-500/10'
                         : 'text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800'
