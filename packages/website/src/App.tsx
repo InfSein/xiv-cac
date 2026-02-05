@@ -10,6 +10,7 @@ import Flow from './pages/Flow';
 import Doc from './pages/Doc';
 import { Tooltip } from './components/Tooltip';
 import { useTheme } from './contexts/ThemeContext';
+import { NotificationProvider, useNotification } from './contexts/NotificationContext';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
@@ -211,10 +212,13 @@ const GlobalSearchParamHandler = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { showNotification } = useNotification();
+  const lastProcessedCode = useRef<string | null>(null);
 
   useEffect(() => {
     const s = searchParams.get('s');
-    if (s) {
+    if (s && s !== lastProcessedCode.current) {
+      lastProcessedCode.current = s;
       try {
         const data = decompress(s);
         sessionStorage.setItem('current_cac', JSON.stringify(data));
@@ -222,9 +226,12 @@ const GlobalSearchParamHandler = () => {
         navigate('/flow', { replace: true });
       } catch (err) {
         console.error('Failed to parse share code from URL:', err);
+        showNotification(t('import.error_cac'), 'error');
+        // 清除错误的参数，避免重复提示
+        navigate('/', { replace: true });
       }
     }
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, showNotification, t]);
 
   return null;
 };
@@ -238,26 +245,28 @@ const getBasename = () => {
 function App() {
   const { t } = useTranslation();
   return (
-    <Router basename={getBasename()}>
-      <GlobalSearchParamHandler />
-      <div className="min-h-screen pt-16 flex flex-col">
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/import" element={<Import />} />
-            <Route path="/flow" element={<Flow />} />
-            <Route path="/doc" element={<Doc />} />
-          </Routes>
-        </main>
-        <footer className="py-12 border-t border-neutral-800 mt-20">
-          <div className="max-w-7xl mx-auto px-4 text-center text-neutral-500 text-sm">
-            <p>© 2026 CAC Standardization Project. {t('common.footer.rights')}</p>
-            <p className="mt-2">{t('common.footer.copy')}</p>
-          </div>
-        </footer>
-      </div>
-    </Router>
+    <NotificationProvider>
+      <Router basename={getBasename()}>
+        <GlobalSearchParamHandler />
+        <div className="min-h-screen pt-16 flex flex-col">
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/import" element={<Import />} />
+              <Route path="/flow" element={<Flow />} />
+              <Route path="/doc" element={<Doc />} />
+            </Routes>
+          </main>
+          <footer className="py-12 border-t border-neutral-800 mt-20">
+            <div className="max-w-7xl mx-auto px-4 text-center text-neutral-500 text-sm">
+              <p>© 2026 CAC Standardization Project. {t('common.footer.rights')}</p>
+              <p className="mt-2">{t('common.footer.copy')}</p>
+            </div>
+          </footer>
+        </div>
+      </Router>
+    </NotificationProvider>
   );
 }
 

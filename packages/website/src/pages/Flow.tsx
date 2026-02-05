@@ -8,6 +8,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { DecompressedCraftAction } from 'xiv-cac-utils';
+import { useNotification } from '../contexts/NotificationContext';
 
 const getImgCdnUrl = (iconID: number) => {
   const CDN_ICON = 'https://icon.nbbjack.com/';
@@ -133,6 +134,7 @@ const Flow = () => {
   const [rawCode, setRawCode] = useState('');
   const [activeTab, setActiveTab] = useState<'macro' | 'markdown'>('macro');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { showNotification } = useNotification();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const siteOrigin = window.location.origin;
@@ -181,6 +183,7 @@ const Flow = () => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+    showNotification(t('flow.copySuccess'), 'success');
   };
 
   const generateMacros = () => {
@@ -557,24 +560,6 @@ const Flow = () => {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {copiedId && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100]"
-          >
-            <div className="flex items-center gap-2.5 px-5 py-3 bg-neutral-900/90 backdrop-blur-md border border-green-500/30 rounded-xl shadow-2xl">
-              <div className="flex items-center justify-center w-5 h-5 bg-green-500/20 rounded-full">
-                <Check size={12} className="text-green-500" />
-              </div>
-              <span className="text-sm font-medium text-neutral-200">{t('flow.copySuccess')}</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

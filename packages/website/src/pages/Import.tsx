@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Search, Loader2, AlertCircle } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { compress, decompress } from 'xiv-cac-utils';
+import { useNotification } from '../contexts/NotificationContext';
 
 type ImportMode = 'cac' | 'macro';
 
@@ -12,7 +13,7 @@ const Import = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [input, setInput] = useState('');
-  const [error, setError] = useState('');
+  const { showNotification } = useNotification();
   const [isLoading, setIsLoading] = useState(false);
   const [importMode, setImportMode] = useState<ImportMode>('cac');
 
@@ -21,7 +22,6 @@ const Import = () => {
     if (!code.trim()) return;
 
     setIsLoading(true);
-    setError('');
 
     try {
       const data = decompress(code);
@@ -30,7 +30,7 @@ const Import = () => {
       sessionStorage.setItem('current_cac_raw', code);
       navigate('/flow');
     } catch (err) {
-      setError(t('import.error_cac'));
+      showNotification(t('import.error_cac'), 'error');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -41,7 +41,6 @@ const Import = () => {
     if (!macro.trim()) return;
 
     setIsLoading(true);
-    setError('');
 
     try {
       const actions: string[] = [];
@@ -64,7 +63,7 @@ const Import = () => {
       sessionStorage.setItem('current_cac_raw', code);
       navigate('/flow');
     } catch (err) {
-      setError(t('import.error_macro'));
+      showNotification(t('import.error_macro'), 'error');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -81,7 +80,6 @@ const Import = () => {
 
   const handleModeChange = (mode: ImportMode) => {
     setImportMode(mode);
-    setError('');
   };
 
   return (
@@ -128,16 +126,6 @@ const Import = () => {
             className="w-full h-48 bg-neutral-900 border border-neutral-700 rounded-xl p-4 text-foreground placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all font-mono"
           />
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 text-red-400 bg-red-400/10 border border-red-400/20 p-4 rounded-lg text-sm"
-            >
-              <AlertCircle size={16} />
-              {error}
-            </motion.div>
-          )}
 
           <button
             onClick={handleImport}
