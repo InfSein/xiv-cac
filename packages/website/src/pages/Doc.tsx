@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Book, Code, Box, Zap } from 'lucide-react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const Doc = () => {
   const { t } = useTranslation();
@@ -34,7 +36,7 @@ const code3 = compress({
       >
         <h1 className="text-4xl font-black mb-4">{t('doc.title')}</h1>
         <p className="text-neutral-500 mb-12">{t('doc.tagline')}</p>
-        
+
         <div className="space-y-12">
           <section>
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
@@ -53,10 +55,20 @@ const code3 = compress({
             </h2>
             <div className="space-y-4">
               <p className="text-sm text-neutral-400">{t('doc.sections.usageDesc')}</p>
-              <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-xl">
-                <pre className="text-xs md:text-sm font-mono text-neutral-300 leading-relaxed overflow-x-auto">
+              <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
+                <SyntaxHighlighter
+                  language="typescript"
+                  style={vscDarkPlus}
+                  customStyle={{
+                    margin: 0,
+                    padding: '1rem',
+                    fontSize: '0.875rem',
+                    lineHeight: '1.5',
+                    backgroundColor: 'transparent',
+                  }}
+                >
                   {exampleCode}
-                </pre>
+                </SyntaxHighlighter>
               </div>
             </div>
           </section>
