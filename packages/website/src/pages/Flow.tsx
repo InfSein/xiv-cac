@@ -136,6 +136,7 @@ const Flow = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { showNotification } = useNotification();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const siteOrigin = window.location.origin;
   const siteUrl = siteOrigin.includes('github.io') ? `${siteOrigin}/xiv-cac/` : siteOrigin;
@@ -182,7 +183,16 @@ const Flow = () => {
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+    
+    if (copyTimeoutRef.current) {
+      clearTimeout(copyTimeoutRef.current);
+    }
+    
+    copyTimeoutRef.current = setTimeout(() => {
+      setCopiedId(null);
+      copyTimeoutRef.current = null;
+    }, 2000);
+    
     showNotification(t('flow.copySuccess'), 'success');
   };
 
