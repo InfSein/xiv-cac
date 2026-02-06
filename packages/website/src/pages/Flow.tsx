@@ -614,7 +614,7 @@ const Flow = () => {
                   <input
                     value={macroSettings.transition}
                     onChange={(e) => setMacroSettings({ ...macroSettings, transition: e.target.value })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-accent/50 transition-colors font-mono"
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-accent/50 hover:border-neutral-700 transition-colors font-mono"
                   />
                 </div>
 
@@ -624,7 +624,7 @@ const Flow = () => {
                   <input
                     value={macroSettings.ending}
                     onChange={(e) => setMacroSettings({ ...macroSettings, ending: e.target.value })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-accent/50 transition-colors font-mono"
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-accent/50 hover:border-neutral-700 transition-colors font-mono"
                   />
                 </div>
 
