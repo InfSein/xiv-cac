@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Share2, Copy, FileText, Settings,
   Terminal, Check, ExternalLink, ChevronRight,
-  ChevronDown
+  ChevronDown, QrCode
 } from 'lucide-react';
+import QRCode from 'qrcode';
 import { DecompressedCraftAction } from 'xiv-cac-utils';
 import { useNotification } from '../contexts/NotificationContext';
 
@@ -123,6 +125,130 @@ const Dropdown = ({ value, onChange, options }: {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+};
+
+const QRCodeIconButton = ({ url }: { url: string }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [coords, setCoords] = useState({ top: 0, right: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const { showNotification } = useNotification();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    QRCode.toDataURL(url, {
+      width: 300,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    }).then(setQrDataUrl);
+  }, [url]);
+
+  const updateCoords = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom,
+        right: window.innerWidth - rect.right
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isHovered) {
+      updateCoords();
+      window.addEventListener('scroll', updateCoords);
+      window.addEventListener('resize', updateCoords);
+    }
+    return () => {
+      window.removeEventListener('scroll', updateCoords);
+      window.removeEventListener('resize', updateCoords);
+    };
+  }, [isHovered]);
+
+  const copyQRToClipboard = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const canvas = document.createElement('canvas');
+      await QRCode.toCanvas(canvas, url, {
+        width: 600,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      });
+      
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            showNotification(t('flow.qrCopySuccess'), 'success');
+          } catch (err) {
+            console.error('Clipboard write failed:', err);
+            showNotification(t('flow.qrCopyFailed'), 'error');
+          }
+        }
+      }, 'image/png');
+    } catch (err) {
+      console.error('Failed to generate/copy QR code:', err);
+      showNotification(t('flow.qrCopyFailed'), 'error');
+    }
+  };
+
+  return (
+    <div 
+      className="flex items-center"
+      onMouseEnter={() => updateCoords()}
+    >
+      <button
+        ref={buttonRef}
+        onClick={() => setIsHovered(true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800 transition-colors"
+      >
+        <QrCode size={14} />
+      </button>
+
+      {createPortal(
+        <AnimatePresence>
+          {isHovered && qrDataUrl && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              className="fixed z-[9999] pt-2"
+              style={{
+                top: coords.top,
+                right: coords.right,
+              }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <div className="bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl p-3">
+                <div className="bg-white p-1 rounded-lg">
+                  <img src={qrDataUrl} alt="QR Code" className="w-32 h-32 max-w-none" />
+                </div>
+                <button
+                  onClick={copyQRToClipboard}
+                  className="w-full mt-3 px-3 py-1.5 bg-accent/10 hover:bg-accent/20 border border-accent/20 hover:border-accent/40 text-accent text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <Copy size={12} />
+                  {t('flow.clickToCopyQR')}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 };
@@ -438,17 +564,20 @@ const Flow = () => {
                     <input
                       readOnly
                       value={`${siteUrl}/?s=${rawCode}`}
-                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-4 pr-12 py-2.5 text-xs text-neutral-400 focus:outline-none focus:border-accent/50 transition-colors font-mono"
+                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-4 pr-20 py-2.5 text-xs text-neutral-400 focus:outline-none focus:border-accent/50 transition-colors font-mono"
                     />
-                    <button
-                      onClick={() => copyToClipboard(`${siteUrl}/?s=${rawCode}`, 'share')}
-                      className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors ${copiedId === 'share'
-                        ? 'text-green-500 bg-green-500/10'
-                        : 'text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800'
-                        }`}
-                    >
-                      {copiedId === 'share' ? <Check size={14} /> : <Copy size={14} />}
-                    </button>
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                      <QRCodeIconButton url={`${siteUrl}/?s=${rawCode}`} />
+                      <button
+                        onClick={() => copyToClipboard(`${siteUrl}/?s=${rawCode}`, 'share')}
+                        className={`p-1.5 rounded-lg transition-colors ${copiedId === 'share'
+                          ? 'text-green-500 bg-green-500/10'
+                          : 'text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800'
+                          }`}
+                      >
+                        {copiedId === 'share' ? <Check size={14} /> : <Copy size={14} />}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
