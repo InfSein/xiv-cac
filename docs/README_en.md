@@ -70,6 +70,13 @@ const codeFromSign = compress({
   type: 'signature',
   actions: ['trained_perfection', 'basicTouch', 'carefulSynthesis2']
 });
+
+// Option D: Direct array input with automatic type inference
+// No need to specify type; supports IDs, names, or signatures
+const codeAuto1 = compress([100001, 100002]);
+const codeAuto2 = compress(['Reflect', 'Basic Synthesis']);
+const codeAuto3 = compress(['waste_not_ii', 'basic_synthesis']);
+const codeAutoMixed = compress(['Great Strides', 'basic_touch']); // Even mixed use is supported
 ```
 
 #### 2. Decompress Encoded String (`decompress`)

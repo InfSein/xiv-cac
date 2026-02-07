@@ -34,6 +34,50 @@ describe("Utils Tools - Compression", () => {
     })
   })
 
+  describe("compress (new array overload)", () => {
+    it("should compress by array of ids", () => {
+      const result = compress([260, 261])
+      expect(result).toBeTypeOf("string")
+      const decompressed = decompress(result)
+      expect(decompressed).toHaveLength(2)
+      expect(decompressed[0].cacId).toBe(1)
+      expect(decompressed[1].cacId).toBe(1)
+    })
+
+    it("should compress by array of names", () => {
+      const result = compress(["阔步"])
+      expect(result).toBeTypeOf("string")
+      const decompressed = decompress(result)
+      expect(decompressed).toHaveLength(1)
+      expect(decompressed[0].name_zh).toBe("阔步")
+    })
+
+    it("should compress by array of signatures", () => {
+      const result = compress(["greatStrides"])
+      expect(result).toBeTypeOf("string")
+      const decompressed = decompress(result)
+      expect(decompressed).toHaveLength(1)
+      expect(decompressed[0].signatures).toContain("greatStrides")
+    })
+
+    it("should compress by array of signatures (snake_case)", () => {
+      const result = compress(["great_strides"])
+      expect(result).toBeTypeOf("string")
+      const decompressed = decompress(result)
+      expect(decompressed).toHaveLength(1)
+      expect(decompressed[0].signatures).toContain("great_strides")
+    })
+
+    it("should compress by mixed array of names and signatures", () => {
+      const result = compress(["阔步", "manipulation"])
+      expect(result).toBeTypeOf("string")
+      const decompressed = decompress(result)
+      expect(decompressed).toHaveLength(2)
+      expect(decompressed[0].name_zh).toBe("阔步")
+      expect(decompressed[1].signatures).toContain("manipulation")
+    })
+  })
+
   describe("decompress", () => {
     it("should decompress correctly", () => {
       const actions = [1, 2, 3] // Internal IDs for Great Strides, Manipulation, Waste Not

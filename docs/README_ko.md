@@ -70,6 +70,13 @@ const codeFromSign = compress({
   type: 'signature',
   actions: ['trained_perfection', 'basicTouch', 'carefulSynthesis2']
 });
+
+// 옵션 D: 배열 직접 입력, 자동 유형 추론
+// 유형을 지정할 필요가 없으며 ID, 이름 또는 서명을 지원합니다
+const codeAuto1 = compress([100001, 100002]);
+const codeAuto2 = compress(['Reflect', 'Basic Synthesis']);
+const codeAuto3 = compress(['waste_not_ii', 'basic_synthesis']);
+const codeAutoMixed = compress(['큰 걸음', 'basic_touch']); // 혼합 사용도 지원됩니다
 ```
 
 #### 2. 인코딩된 문자열 해제 (`decompress`)

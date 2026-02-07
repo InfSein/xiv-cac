@@ -70,6 +70,13 @@ const codeFromSign = compress({
   type: 'signature',
   actions: ['trained_perfection', 'basicTouch', 'carefulSynthesis2']
 });
+
+// 方式 D：直接傳入數組，自動推斷類型
+// 無需指定類型，支持 ID、名稱或簽名
+const codeAuto1 = compress([100001, 100002]);
+const codeAuto2 = compress(['Reflect', 'Basic Synthesis']);
+const codeAuto3 = compress(['waste_not_ii', 'basic_synthesis']);
+const codeAutoMixed = compress(['闊步', 'basic_touch']); // 甚至支持混合使用
 ```
 
 #### 2. 解壓編碼字符串 (`decompress`)

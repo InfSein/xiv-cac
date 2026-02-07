@@ -70,6 +70,13 @@ const codeFromSign = compress({
   type: 'signature',
   actions: ['trained_perfection', 'basicTouch', 'carefulSynthesis2']
 });
+
+// オプション D：配列を直接入力、自動的な型推論
+// タイプを指定する必要はなく、ID、名前、または署名をサポートします
+const codeAuto1 = compress([100001, 100002]);
+const codeAuto2 = compress(['Reflect', 'Basic Synthesis']);
+const codeAuto3 = compress(['waste_not_ii', 'basic_synthesis']);
+const codeAutoMixed = compress(['グレートストライド', 'basic_touch']); // 混合使用もサポート
 ```
 
 #### 2. エンコードされた文字列の展開 (`decompress`)
