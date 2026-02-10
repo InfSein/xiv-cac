@@ -2,30 +2,47 @@ import { craftActionMapById, craftActionMapByName, craftActionMapBySignature, cr
 import { encode, decode } from "./code"
 import { CompressOption, DecompressedCraftAction, CraftActionCacId } from "../types"
 
-export const compress = (option: CompressOption) => {
+export const compress = (option: CompressOption | number[] | string[]) => {
   const parsedActions : number[] = []
-  switch(option.type) {
-    case "id":
-      option.actions.forEach(action => {
-        const cacId = craftActionMapById[action]
-        if (!cacId) throw new Error(`Invalid action id: ${action}`)
-        parsedActions.push(cacId)
-      })
-      break
-    case "name":
-      option.actions.forEach(action => {
-        const cacId = craftActionMapByName[action]
-        if (!cacId) throw new Error(`Invalid action name: ${action}`)
-        parsedActions.push(cacId)
-      })
-      break
-    case "signature":
-      option.actions.forEach(action => {
-        const cacId = craftActionMapBySignature[action]
-        if (!cacId) throw new Error(`Invalid action signature: ${action}`)
-        parsedActions.push(cacId)
-      })
-      break
+  if (Array.isArray(option)) {
+    option.forEach(action => {
+      let cacId: number | undefined
+      if (typeof action === 'number') {
+        cacId = craftActionMapById[action]
+        if (cacId === undefined) throw new Error(`Invalid action id: ${action}`)
+      } else {
+        cacId = craftActionMapByName[action]
+        if (cacId === undefined) {
+          cacId = craftActionMapBySignature[action]
+        }
+        if (cacId === undefined) throw new Error(`Invalid action name or signature: ${action}`)
+      }
+      parsedActions.push(cacId)
+    })
+  } else {
+    switch(option.type) {
+      case "id":
+        option.actions.forEach(action => {
+          const cacId = craftActionMapById[action]
+          if (!cacId) throw new Error(`Invalid action id: ${action}`)
+          parsedActions.push(cacId)
+        })
+        break
+      case "name":
+        option.actions.forEach(action => {
+          const cacId = craftActionMapByName[action]
+          if (!cacId) throw new Error(`Invalid action name: ${action}`)
+          parsedActions.push(cacId)
+        })
+        break
+      case "signature":
+        option.actions.forEach(action => {
+          const cacId = craftActionMapBySignature[action]
+          if (!cacId) throw new Error(`Invalid action signature: ${action}`)
+          parsedActions.push(cacId)
+        })
+        break
+    }
   }
   const result = encode(parsedActions)
   return result

@@ -26,6 +26,11 @@ const code3 = compress({
   type: 'signature',
   actions: ['waste_not_ii', 'basic_synthesis']
 }); // by signature
+
+// Compress by array (auto-detect type)
+const code4 = compress([100001, 100002]);
+const code5 = compress(['Reflect', 'Basic Synthesis']);
+const code6 = compress(['waste_not_ii', 'basic_synthesis']);
 `;
 
   return (

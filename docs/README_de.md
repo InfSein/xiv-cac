@@ -70,6 +70,13 @@ const codeFromSign = compress({
   type: 'signature',
   actions: ['trained_perfection', 'basicTouch', 'carefulSynthesis2']
 });
+
+// Option D: Array direkt eingeben, automatische Typ-Inferenz
+// Keine Angabe des Typs erforderlich. Unterstützt IDs, Namen oder Signaturen
+const codeAuto1 = compress([100001, 100002]);
+const codeAuto2 = compress(['Reflect', 'Basic Synthesis']);
+const codeAuto3 = compress(['waste_not_ii', 'basic_synthesis']);
+const codeAutoMixed = compress(['Große Schritte', 'basic_touch']); // Sogar gemischte Nutzung wird unterstützt
 ```
 
 #### 2. Kodierte Zeichenfolge dekomprimieren (`decompress`)
