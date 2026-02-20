@@ -258,7 +258,7 @@ const Flow = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<DecompressedCraftAction[]>([]);
   const [rawCode, setRawCode] = useState('');
-  const [activeTab, setActiveTab] = useState<'macro' | 'markdown'>('macro');
+  const [activeTab, setActiveTab] = useState<'macro' | 'markdown' | 'nga'>('macro');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { showNotification } = useNotification();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -273,12 +273,17 @@ const Flow = () => {
     macrolock: boolean;
     transition: string;
     ending: string;
+    ngaLangs: string[];
   };
   const [macroSettings, setMacroSettings] = useState<MacroSettings>(() => {
     const saved = localStorage.getItem('cac_macro_settings');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (!parsed.ngaLangs) {
+          parsed.ngaLangs = ['zh', 'ja', 'en'];
+        }
+        return parsed;
       } catch (e) {
         console.error('Failed to parse macro settings', e);
       }
@@ -287,7 +292,8 @@ const Flow = () => {
       language: 'auto',
       macrolock: false,
       transition: '/e Macro #{index} ends! <se.2>',
-      ending: '/e Craft Done! <se.1>'
+      ending: '/e Craft Done! <se.1>',
+      ngaLangs: ['zh', 'ja', 'en']
     };
   });
 
@@ -322,24 +328,21 @@ const Flow = () => {
     showNotification(t('flow.copySuccess'), 'success');
   };
 
-  const generateMacros = () => {
-    const lines: string[] = [];
-    const getAutoLang = () => {
-      if (i18n.language === 'zh-CN') return 'zh';
-      if (i18n.language === 'zh-TW') return 'tc';
-      return i18n.language.split('-')[0];
-    }
-    const langSuffix = macroSettings.language === 'auto'
-      ? getAutoLang()
-      : macroSettings.language.split('-')[0];
+  const getAutoLang = () => {
+    if (i18n.language === 'zh-CN') return 'zh';
+    if (i18n.language === 'zh-TW') return 'tc';
+    return i18n.language.split('-')[0];
+  }
 
+  const generateMacrosWorker = (langSuffix: string) => {
+    const lines: string[] = [];
     data.forEach((action) => {
       const nameKey = `name_${langSuffix}` as keyof typeof action;
       const name = action[nameKey] || action.name_en;
       lines.push(`/ac "${name}" <wait.${action.wait_time}>`);
     });
 
-    const macros: string[] = [];
+    const macrosWorkerOut: string[] = [];
     let currentIndex = 0;
 
     while (currentIndex < lines.length) {
@@ -366,29 +369,67 @@ const Flow = () => {
 
       // 4. Add footer
       const isLastMacro = currentIndex >= lines.length;
-      const nextMacroIndex = macros.length + 2; // +1 for 0-based to 1-based, +1 for "next"
 
       if (!isLastMacro) {
         // Transition echo
-        // Note: mIdx logic in original was "current chunk index + 1". 
-        // Here, if this is macro 1 (index 0), we want to say "Macro 1 ends".
-        // Or "Next is Macro 2"? 
-        // Original: `macroSettings.transition.replace('#{index}', String(mIdx))`
-        // Original mIdx was loop based: floor(i / chunk) + 1. So it was current macro index.
-        // Let's stick to current macro index.
-        const currentMacroNumber = macros.length + 1;
+        const currentMacroNumber = macrosWorkerOut.length + 1;
         macroLines.push(macroSettings.transition.replace('#{index}', String(currentMacroNumber)));
       } else {
         // Ending echo
         macroLines.push(macroSettings.ending);
       }
 
-      macros.push(macroLines.join('\r\n'));
+      macrosWorkerOut.push(macroLines.join('\r\n'));
     }
 
-    return macros;
+    return macrosWorkerOut;
+  };
+
+  const generateMacros = () => {
+    const langSuffix = macroSettings.language === 'auto'
+      ? getAutoLang()
+      : macroSettings.language.split('-')[0];
+
+    return generateMacrosWorker(langSuffix);
   };
   const macros = generateMacros();
+
+  const generateNga = () => {
+    let ngaText = `[b]CAC工序码: [/b]${rawCode}([url=${siteUrl}/?s=${rawCode}]点此打开[/url])\n`;
+    const langMap = {
+      zh: '中文宏',
+      ja: '日文宏',
+      en: '英文宏'
+    };
+
+    const ngaLangs = macroSettings.ngaLangs || ['zh', 'ja', 'en'];
+
+    ngaLangs.forEach(lang => {
+      if (!langMap[lang as keyof typeof langMap]) return;
+      ngaText += `[collapse=${langMap[lang as keyof typeof langMap]}]\n[table]\n`;
+      const macrosOfLang = generateMacrosWorker(lang);
+
+      const eachLineMaximum = 3;
+      for (let i = 0; i < macrosOfLang.length; i += eachLineMaximum) {
+        ngaText += `[tr]\n`;
+        const chunk = macrosOfLang.slice(i, i + eachLineMaximum);
+        chunk.forEach(macro => {
+          ngaText += `[td top width=1][code]${macro}[/code][/td]\n`;
+        });
+        if (i !== 0 && chunk.length < eachLineMaximum) {
+          for (let j = 0; j < eachLineMaximum - chunk.length; j++) {
+            ngaText += `[td][/td]\n`;
+          }
+        }
+        ngaText += `[/tr]\n`;
+      }
+      ngaText += `[/table]\n[/collapse]`;
+    });
+
+    ngaText += '\n';
+    return ngaText;
+  };
+  const ngaCode = generateNga();
 
   const generateMarkdown = () => {
     let md = `### My Craft Flow\r\n\r\n`;
@@ -444,6 +485,14 @@ const Flow = () => {
               >
                 <FileText size={14} /> {t('flow.tabs.markdown')}
               </button>
+              {(i18n.language === 'zh-CN' || activeTab === 'nga') && (
+                <button
+                  onClick={() => setActiveTab('nga')}
+                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${activeTab === 'nga' ? 'bg-background border-t-2 border-accent text-accent' : 'text-neutral-500 hover:text-neutral-300'}`}
+                >
+                  <FileText size={14} /> NGA
+                </button>
+              )}
             </div>
 
             <div className="p-6 bg-neutral-950/30">
@@ -503,6 +552,48 @@ const Flow = () => {
                     </div>
                   );
                 })()
+              ) : activeTab === 'nga' ? (
+                <div className="relative flex flex-col gap-4">
+                  <div className="flex gap-4">
+                    输出语言：
+                    {[
+                      { id: 'zh', label: '中文' },
+                      { id: 'ja', label: '日文' },
+                      { id: 'en', label: '英文' }
+                    ].map(lang => (
+                      <label key={lang.id} className="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={(macroSettings.ngaLangs || ['zh', 'ja', 'en']).includes(lang.id)}
+                          onChange={(e) => {
+                            const newLangs = e.target.checked
+                              ? [...(macroSettings.ngaLangs || ['zh', 'ja', 'en']), lang.id]
+                              : (macroSettings.ngaLangs || ['zh', 'ja', 'en']).filter(l => l !== lang.id);
+                            setMacroSettings({ ...macroSettings, ngaLangs: newLangs });
+                          }}
+                          className="w-4 h-4 rounded border-neutral-600 bg-neutral-900 accent-accent"
+                        />
+                        {lang.label}
+                      </label>
+                    ))}
+                  </div>
+                  <div className="relative group">
+                    <div className="absolute top-3 right-3 z-10">
+                      <button
+                        onClick={() => copyToClipboard(ngaCode, 'nga')}
+                        className={`flex items-center justify-center p-2 rounded-lg border transition-all backdrop-blur-sm ${copiedId === 'nga'
+                          ? 'bg-green-500/20 border-green-500/50 text-green-500'
+                          : 'bg-accent/10 border-accent/30 text-accent hover:bg-accent/30 hover:border-accent/50 hover:scale-105'
+                          }`}
+                      >
+                        {copiedId === 'nga' ? <Check size={14} /> : <Copy size={14} />}
+                      </button>
+                    </div>
+                    <pre className="p-4 bg-neutral-900 rounded-lg border border-neutral-800 font-mono text-sm overflow-x-auto whitespace-pre-wrap flex-1">
+                      {ngaCode}
+                    </pre>
+                  </div>
+                </div>
               ) : (
                 <div className="relative group">
                   <div className="absolute top-3 right-3">
