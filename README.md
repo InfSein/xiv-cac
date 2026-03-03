@@ -67,6 +67,13 @@ const codeFromSign = compress({
   type: 'signature',
   actions: ['trained_perfection', 'basicTouch', 'carefulSynthesis2']
 });
+
+// 方式 D：直接传入数组，自动推断类型
+// 无需指定类型，支持 ID、名称或签名
+const codeAuto1 = compress([100001, 100002]);
+const codeAuto2 = compress(['Reflect', 'Basic Synthesis']);
+const codeAuto3 = compress(['waste_not_ii', 'basic_synthesis']);
+const codeAutoMixed = compress(['阔步', 'basic_touch']); // 支持多种语言，甚至可以混搭使用
 ```
 
 #### 2. 解压编码字符串 (`decompress`)
@@ -98,8 +105,8 @@ try {
 ## 开发与贡献
 
 ### 运行环境
- - Node.js 18+
- - npm 9+
+ - Node.js 20+
+ - npm 11+
 
 ### 维护技能数据
  - [`packages\utils\src\types\craftactions.ts`](./packages/utils/src/types/craftactions.ts)

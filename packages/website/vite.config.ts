@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "./",
+  base: process.env.GITHUB_ACTIONS ? `/xiv-cac/` : './',
   server: {
     host: "::",
     port: 3002,

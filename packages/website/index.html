@@ -6,6 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CAC Tool - FFXIV Craft Action Code</title>
     <meta name="description" content="Standardized craft action flow visualization and sharing tool for Final Fantasy XIV." />
+    <script type="text/javascript">
+      // 单页应用路由恢复脚本
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&') 
+          }).filter(function(v) { return v.indexOf('p=/') === 0; })[0];
+          if (decoded !== undefined) {
+            window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded.slice(3) +
+              (l.hash || '')
+            );
+          }
+        } else if (l.search.slice(1, 3) === 'p=') {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&') 
+          }).filter(function(v) { return v.indexOf('p=') === 0; })[0];
+          if (decoded !== undefined) {
+            var parts = decoded.slice(2).split('q=');
+            var path = parts[0];
+            var query = parts[1] ? ('?' + parts[1]) : '';
+            window.history.replaceState(null, null,
+              l.pathname.slice(0, l.pathname.lastIndexOf('/') + 1) + path + query + (l.hash || '')
+            );
+          }
+        }
+      }(window.location))
+    </script>
   </head>
   <body>
     <div id="root"></div>

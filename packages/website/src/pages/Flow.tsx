@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Share2, Copy, FileText, Settings,
   Terminal, Check, ExternalLink, ChevronRight,
-  ChevronDown
+  ChevronDown, QrCode
 } from 'lucide-react';
+import QRCode from 'qrcode';
 import { DecompressedCraftAction } from 'xiv-cac-utils';
+import { useNotification } from '../contexts/NotificationContext';
 
 const getImgCdnUrl = (iconID: number) => {
   const CDN_ICON = 'https://icon.nbbjack.com/';
@@ -126,14 +129,143 @@ const Dropdown = ({ value, onChange, options }: {
   );
 };
 
+const QRCodeIconButton = ({ url }: { url: string }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [coords, setCoords] = useState({ top: 0, right: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const { showNotification } = useNotification();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    QRCode.toDataURL(url, {
+      width: 300,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    }).then(setQrDataUrl);
+  }, [url]);
+
+  const updateCoords = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom,
+        right: window.innerWidth - rect.right
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isHovered) {
+      updateCoords();
+      window.addEventListener('scroll', updateCoords);
+      window.addEventListener('resize', updateCoords);
+    }
+    return () => {
+      window.removeEventListener('scroll', updateCoords);
+      window.removeEventListener('resize', updateCoords);
+    };
+  }, [isHovered]);
+
+  const copyQRToClipboard = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const canvas = document.createElement('canvas');
+      await QRCode.toCanvas(canvas, url, {
+        width: 600,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      });
+      
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            showNotification(t('flow.qrCopySuccess'), 'success');
+          } catch (err) {
+            console.error('Clipboard write failed:', err);
+            showNotification(t('flow.qrCopyFailed'), 'error');
+          }
+        }
+      }, 'image/png');
+    } catch (err) {
+      console.error('Failed to generate/copy QR code:', err);
+      showNotification(t('flow.qrCopyFailed'), 'error');
+    }
+  };
+
+  return (
+    <div 
+      className="flex items-center"
+      onMouseEnter={() => updateCoords()}
+    >
+      <button
+        ref={buttonRef}
+        onClick={() => setIsHovered(true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800 transition-colors"
+      >
+        <QrCode size={14} />
+      </button>
+
+      {createPortal(
+        <AnimatePresence>
+          {isHovered && qrDataUrl && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              className="fixed z-[9999] pt-2"
+              style={{
+                top: coords.top,
+                right: coords.right,
+              }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <div className="bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl p-3">
+                <div className="bg-white p-1 rounded-lg">
+                  <img src={qrDataUrl} alt="QR Code" className="w-32 h-32 max-w-none" />
+                </div>
+                <button
+                  onClick={copyQRToClipboard}
+                  className="w-full mt-3 px-3 py-1.5 bg-accent/10 hover:bg-accent/20 border border-accent/20 hover:border-accent/40 text-accent text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <Copy size={12} />
+                  {t('flow.clickToCopyQR')}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </div>
+  );
+};
+
 const Flow = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [data, setData] = useState<DecompressedCraftAction[]>([]);
   const [rawCode, setRawCode] = useState('');
-  const [activeTab, setActiveTab] = useState<'macro' | 'markdown'>('macro');
+  const [activeTab, setActiveTab] = useState<'macro' | 'markdown' | 'nga'>('macro');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { showNotification } = useNotification();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const siteOrigin = window.location.origin;
+  const siteUrl = siteOrigin.includes('github.io') ? `${siteOrigin}/xiv-cac/` : siteOrigin;
 
   // Macro Settings
   type MacroSettings = {
@@ -141,12 +273,17 @@ const Flow = () => {
     macrolock: boolean;
     transition: string;
     ending: string;
+    ngaLangs: string[];
   };
   const [macroSettings, setMacroSettings] = useState<MacroSettings>(() => {
     const saved = localStorage.getItem('cac_macro_settings');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (!parsed.ngaLangs) {
+          parsed.ngaLangs = ['zh', 'ja', 'en'];
+        }
+        return parsed;
       } catch (e) {
         console.error('Failed to parse macro settings', e);
       }
@@ -155,7 +292,8 @@ const Flow = () => {
       language: 'auto',
       macrolock: false,
       transition: '/e Macro #{index} ends! <se.2>',
-      ending: '/e Craft Done! <se.1>'
+      ending: '/e Craft Done! <se.1>',
+      ngaLangs: ['zh', 'ja', 'en']
     };
   });
 
@@ -177,27 +315,34 @@ const Flow = () => {
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+    
+    if (copyTimeoutRef.current) {
+      clearTimeout(copyTimeoutRef.current);
+    }
+    
+    copyTimeoutRef.current = setTimeout(() => {
+      setCopiedId(null);
+      copyTimeoutRef.current = null;
+    }, 2000);
+    
+    showNotification(t('flow.copySuccess'), 'success');
   };
 
-  const generateMacros = () => {
-    const lines: string[] = [];
-    const getAutoLang = () => {
-      if (i18n.language === 'zh-CN') return 'zh';
-      if (i18n.language === 'zh-TW') return 'tc';
-      return i18n.language.split('-')[0];
-    }
-    const langSuffix = macroSettings.language === 'auto'
-      ? getAutoLang()
-      : macroSettings.language.split('-')[0];
+  const getAutoLang = () => {
+    if (i18n.language === 'zh-CN') return 'zh';
+    if (i18n.language === 'zh-TW') return 'tc';
+    return i18n.language.split('-')[0];
+  }
 
+  const generateMacrosWorker = (langSuffix: string) => {
+    const lines: string[] = [];
     data.forEach((action) => {
       const nameKey = `name_${langSuffix}` as keyof typeof action;
       const name = action[nameKey] || action.name_en;
       lines.push(`/ac "${name}" <wait.${action.wait_time}>`);
     });
 
-    const macros: string[] = [];
+    const macrosWorkerOut: string[] = [];
     let currentIndex = 0;
 
     while (currentIndex < lines.length) {
@@ -224,33 +369,71 @@ const Flow = () => {
 
       // 4. Add footer
       const isLastMacro = currentIndex >= lines.length;
-      const nextMacroIndex = macros.length + 2; // +1 for 0-based to 1-based, +1 for "next"
 
       if (!isLastMacro) {
         // Transition echo
-        // Note: mIdx logic in original was "current chunk index + 1". 
-        // Here, if this is macro 1 (index 0), we want to say "Macro 1 ends".
-        // Or "Next is Macro 2"? 
-        // Original: `macroSettings.transition.replace('#{index}', String(mIdx))`
-        // Original mIdx was loop based: floor(i / chunk) + 1. So it was current macro index.
-        // Let's stick to current macro index.
-        const currentMacroNumber = macros.length + 1;
+        const currentMacroNumber = macrosWorkerOut.length + 1;
         macroLines.push(macroSettings.transition.replace('#{index}', String(currentMacroNumber)));
       } else {
         // Ending echo
         macroLines.push(macroSettings.ending);
       }
 
-      macros.push(macroLines.join('\r\n'));
+      macrosWorkerOut.push(macroLines.join('\r\n'));
     }
 
-    return macros;
+    return macrosWorkerOut;
+  };
+
+  const generateMacros = () => {
+    const langSuffix = macroSettings.language === 'auto'
+      ? getAutoLang()
+      : macroSettings.language.split('-')[0];
+
+    return generateMacrosWorker(langSuffix);
   };
   const macros = generateMacros();
 
+  const generateNga = () => {
+    let ngaText = `[b]CAC工序码: [/b]${rawCode}([url=${siteUrl}/?s=${rawCode}]点此打开[/url])\n`;
+    const langMap = {
+      zh: '中文宏',
+      ja: '日文宏',
+      en: '英文宏'
+    };
+
+    const ngaLangs = macroSettings.ngaLangs || ['zh', 'ja', 'en'];
+
+    ngaLangs.forEach(lang => {
+      if (!langMap[lang as keyof typeof langMap]) return;
+      ngaText += `[collapse=${langMap[lang as keyof typeof langMap]}]\n[table]\n`;
+      const macrosOfLang = generateMacrosWorker(lang);
+
+      const eachLineMaximum = 3;
+      for (let i = 0; i < macrosOfLang.length; i += eachLineMaximum) {
+        ngaText += `[tr]\n`;
+        const chunk = macrosOfLang.slice(i, i + eachLineMaximum);
+        chunk.forEach(macro => {
+          ngaText += `[td top width=1][code]${macro}[/code][/td]\n`;
+        });
+        if (i !== 0 && chunk.length < eachLineMaximum) {
+          for (let j = 0; j < eachLineMaximum - chunk.length; j++) {
+            ngaText += `[td][/td]\n`;
+          }
+        }
+        ngaText += `[/tr]\n`;
+      }
+      ngaText += `[/table]\n[/collapse]`;
+    });
+
+    ngaText += '\n';
+    return ngaText;
+  };
+  const ngaCode = generateNga();
+
   const generateMarkdown = () => {
     let md = `### My Craft Flow\r\n\r\n`;
-    md += `* CAC: ${rawCode}\r\n* SHARE: <${window.location.origin}/?s=${rawCode}>\r\n\r\n`;
+    md += `* CAC: ${rawCode}\r\n* SHARE: <${siteUrl}/?s=${rawCode}>\r\n\r\n`;
     macros.forEach((macro, idx) => {
       md += `#### ${t('flow.macroTitle', { index: idx + 1 })}\r\n`;
       md += '```\r\n' + macro + '\r\n```';
@@ -302,6 +485,14 @@ const Flow = () => {
               >
                 <FileText size={14} /> {t('flow.tabs.markdown')}
               </button>
+              {(i18n.language === 'zh-CN' || activeTab === 'nga') && (
+                <button
+                  onClick={() => setActiveTab('nga')}
+                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-colors ${activeTab === 'nga' ? 'bg-background border-t-2 border-accent text-accent' : 'text-neutral-500 hover:text-neutral-300'}`}
+                >
+                  <FileText size={14} /> NGA
+                </button>
+              )}
             </div>
 
             <div className="p-6 bg-neutral-950/30">
@@ -361,6 +552,48 @@ const Flow = () => {
                     </div>
                   );
                 })()
+              ) : activeTab === 'nga' ? (
+                <div className="relative flex flex-col gap-4">
+                  <div className="flex gap-4">
+                    输出语言：
+                    {[
+                      { id: 'zh', label: '中文' },
+                      { id: 'ja', label: '日文' },
+                      { id: 'en', label: '英文' }
+                    ].map(lang => (
+                      <label key={lang.id} className="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={(macroSettings.ngaLangs || ['zh', 'ja', 'en']).includes(lang.id)}
+                          onChange={(e) => {
+                            const newLangs = e.target.checked
+                              ? [...(macroSettings.ngaLangs || ['zh', 'ja', 'en']), lang.id]
+                              : (macroSettings.ngaLangs || ['zh', 'ja', 'en']).filter(l => l !== lang.id);
+                            setMacroSettings({ ...macroSettings, ngaLangs: newLangs });
+                          }}
+                          className="w-4 h-4 rounded border-neutral-600 bg-neutral-900 accent-accent"
+                        />
+                        {lang.label}
+                      </label>
+                    ))}
+                  </div>
+                  <div className="relative group">
+                    <div className="absolute top-3 right-3 z-10">
+                      <button
+                        onClick={() => copyToClipboard(ngaCode, 'nga')}
+                        className={`flex items-center justify-center p-2 rounded-lg border transition-all backdrop-blur-sm ${copiedId === 'nga'
+                          ? 'bg-green-500/20 border-green-500/50 text-green-500'
+                          : 'bg-accent/10 border-accent/30 text-accent hover:bg-accent/30 hover:border-accent/50 hover:scale-105'
+                          }`}
+                      >
+                        {copiedId === 'nga' ? <Check size={14} /> : <Copy size={14} />}
+                      </button>
+                    </div>
+                    <pre className="p-4 bg-neutral-900 rounded-lg border border-neutral-800 font-mono text-sm overflow-x-auto whitespace-pre-wrap flex-1">
+                      {ngaCode}
+                    </pre>
+                  </div>
+                </div>
               ) : (
                 <div className="relative group">
                   <div className="absolute top-3 right-3">
@@ -421,18 +654,21 @@ const Flow = () => {
                   <div className="relative">
                     <input
                       readOnly
-                      value={`${window.location.origin}/?s=${rawCode}`}
-                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-4 pr-12 py-2.5 text-xs text-neutral-400 focus:outline-none focus:border-accent/50 transition-colors font-mono"
+                      value={`${siteUrl}/?s=${rawCode}`}
+                      className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-4 pr-20 py-2.5 text-xs text-neutral-400 focus:outline-none focus:border-accent/50 transition-colors font-mono"
                     />
-                    <button
-                      onClick={() => copyToClipboard(`${window.location.origin}/?s=${rawCode}`, 'share')}
-                      className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors ${copiedId === 'share'
-                        ? 'text-green-500 bg-green-500/10'
-                        : 'text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800'
-                        }`}
-                    >
-                      {copiedId === 'share' ? <Check size={14} /> : <Copy size={14} />}
-                    </button>
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                      <QRCodeIconButton url={`${siteUrl}/?s=${rawCode}`} />
+                      <button
+                        onClick={() => copyToClipboard(`${siteUrl}/?s=${rawCode}`, 'share')}
+                        className={`p-1.5 rounded-lg transition-colors ${copiedId === 'share'
+                          ? 'text-green-500 bg-green-500/10'
+                          : 'text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800'
+                          }`}
+                      >
+                        {copiedId === 'share' ? <Check size={14} /> : <Copy size={14} />}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -469,7 +705,7 @@ const Flow = () => {
                   <input
                     value={macroSettings.transition}
                     onChange={(e) => setMacroSettings({ ...macroSettings, transition: e.target.value })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-accent/50 transition-colors font-mono"
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-accent/50 hover:border-neutral-700 transition-colors font-mono"
                   />
                 </div>
 
@@ -479,7 +715,7 @@ const Flow = () => {
                   <input
                     value={macroSettings.ending}
                     onChange={(e) => setMacroSettings({ ...macroSettings, ending: e.target.value })}
-                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-accent/50 transition-colors font-mono"
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-accent/50 hover:border-neutral-700 transition-colors font-mono"
                   />
                 </div>
 
@@ -554,24 +790,6 @@ const Flow = () => {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {copiedId && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100]"
-          >
-            <div className="flex items-center gap-2.5 px-5 py-3 bg-neutral-900/90 backdrop-blur-md border border-green-500/30 rounded-xl shadow-2xl">
-              <div className="flex items-center justify-center w-5 h-5 bg-green-500/20 rounded-full">
-                <Check size={12} className="text-green-500" />
-              </div>
-              <span className="text-sm font-medium text-neutral-200">{t('flow.copySuccess')}</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

@@ -89,4 +89,9 @@ export enum CraftActionCacId {
   ImmaculateMend = 35,
   /** 工匠的绝技 */
   TrainedPerfection = 36,
+  /**
+   * 任务指令2
+   * - 在宇宙探索中会视配方而变为“奇迹之材”或“宇宙稳手”。
+   */
+  DutyAction2 = 37,
 }

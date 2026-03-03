@@ -70,6 +70,13 @@ const codeFromSign = compress({
   type: 'signature',
   actions: ['trained_perfection', 'basicTouch', 'carefulSynthesis2']
 });
+
+// Option D : Saisie directe du tableau, inférence automatique du type
+// Pas besoin de spécifier le type, prend en charge les ID, les noms ou les signatures
+const codeAuto1 = compress([100001, 100002]);
+const codeAuto2 = compress(['Reflect', 'Basic Synthesis']);
+const codeAuto3 = compress(['waste_not_ii', 'basic_synthesis']);
+const codeAutoMixed = compress(['Grands progrès', 'basic_touch']); // Même l'utilisation mixte est prise en charge
 ```
 
 #### 2. Décompresser une chaîne encodée (`decompress`)
@@ -101,8 +108,8 @@ Le paquet inclut un support TypeScript complet. Les types principaux sont :
 ## Développement & Contribution
 
 ### Environnement
- - Node.js 18+
- - npm 9+
+ - Node.js 20+
+ - npm 11+
 
 ### Maintenance des données d'action
  - [`packages\utils\src\types\craftactions.ts`](../packages/utils/src/types/craftactions.ts)
