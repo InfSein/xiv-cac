@@ -708,7 +708,7 @@ export const craftActions: Record<CraftActionCacId, CraftAction> = {
       "material_miracle",
       "stellar_steady_hand",
     ],
-    wait_time: 3,
+    wait_time: 2,
     icon: 124,
   },
 }
