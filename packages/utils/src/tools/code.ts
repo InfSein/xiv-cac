@@ -51,7 +51,7 @@ export const decode = (code: string) => {
   if (!Number.isInteger(version) || version < 0) {
     throw new Error('Invalid version')
   }
-  if (version < UtilConf.version) {
+  if (version > UtilConf.version) {
     throw new Error('Unsupported version')
   }
   if (!Number.isInteger(bitWidth) || bitWidth <= 0) {
